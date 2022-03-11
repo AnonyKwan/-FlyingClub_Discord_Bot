@@ -92,7 +92,6 @@ async def gas(ctx,wallet_address):
                     gas_comfim_embed.set_footer(text="空中支援命令 /gas <錢包地址>")
                     view.remove_item(comfirm_button)
                     view.remove_item(reject_button)
-                    view.remove_item(copy_button)
                     await ctx.edit(embed=gas_comfim_embed,view=view)
 
             async def reject_button_callback (interaction):
@@ -101,6 +100,7 @@ async def gas(ctx,wallet_address):
                   view.add_item(accept_button)
                   view.remove_item(comfirm_button)
                   view.remove_item(reject_button)
+                  view.remove_item(copy_button)
                   await ctx.edit(embed=gas_request_embed,view=view)
 
             comfirm_button.callback = confirm_button_callback
