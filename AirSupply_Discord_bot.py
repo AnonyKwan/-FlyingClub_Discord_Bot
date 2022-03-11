@@ -6,7 +6,7 @@ import discord
 from discord import Color
 from discord.ui import Button, View
 
-discord_token = os.getenv('DISCORD_TOKEN')
+discord_token = ''
 print (discord_token)
 api_key_list = ["4JIJWVNR8HJDJF44C37MF5UJAA3NFMZ5R2","FN7RPKGTW7UHXSA6FATIWXQD4M53R9MDF7","5BZDS26XVNHWU4SFJC7E99V7MENRSRSBCJ",'VKXWNXZ134PUJZ9874UU7W72CMYXTE7XG1']
 ramdon_api_key = random.choice(api_key_list)
@@ -37,7 +37,7 @@ def polygonscan_status (wallet_address):
 async def on_ready():
     print (f"{bot.user} is connected!")
 
-@bot.slash_command(guild_ids=[925970052174462976,358968997762433024],description = "Gas Air Supply")
+@bot.slash_command(guild_ids=[925970052174462976,358968997762433024,945103376679596082],description = "Gas Air Supply")
 async def gas(ctx,wallet_address):
     
     if polygonscan_status (wallet_address) == False:
@@ -50,7 +50,7 @@ async def gas(ctx,wallet_address):
             nz_holder = "✅"
         else:
             nz_holder = "❌"       
-        gas_request_embed = discord.Embed(title="請求空中支援 - 錢包地址",description=wallet_address ,colour=Color.red())
+        gas_request_embed = discord.Embed(title=f"請求空中支援 - 錢包地址",description=wallet_address ,colour=Color.red())
         gas_request_embed.set_author(name=ctx.author, icon_url=ctx.author.display_avatar)
         gas_request_embed.set_thumbnail(url="https://flyingclub.io/assets/paperplane-3245df87512ef7c15e7b91cc0cdeae37109489f2c839fd48cb3674606e5fe0b3.png")
         gas_request_embed.add_field(name="錢包餘額", value=f"{token_remain} NZ", inline=True)
@@ -58,7 +58,7 @@ async def gas(ctx,wallet_address):
         gas_request_embed.add_field(name="援助狀態", value="等待支援中！", inline=True)
         gas_request_embed.set_footer(text="空中支援命令 /gas <錢包地址>")
         accept_button = Button(label="提供援助",style=discord.ButtonStyle.green,emoji="😁")
-
+        
         async def accept_button_callback (interaction):
             
             gas_supply_embed = discord.Embed(title="空中支援處理中 - 錢包地址",description=wallet_address ,colour=Color.yellow())
@@ -70,23 +70,29 @@ async def gas(ctx,wallet_address):
             gas_supply_embed.set_footer(text="空中支援命令 /gas <錢包地址>")
             comfirm_button = Button(label="已提供援助",style=discord.ButtonStyle.green,emoji="😁")
             reject_button = Button(label="退出援助",style=discord.ButtonStyle.green,emoji="😥")
+            copy_button = Button(label="錢包地址",style=discord.ButtonStyle.green,custom_id=wallet_address,emoji="©️")
             accept_user = interaction.user
             view.remove_item(accept_button)
             view.add_item(comfirm_button)
             view.add_item(reject_button)
+            view.add_item(copy_button)
             await ctx.edit(embed=gas_supply_embed,view=view)
+
+            async def copy_button_callback (interaction):
+                await ctx.send(wallet_address,delete_after=10)
             
             async def confirm_button_callback (interaction):
                 comfirm_user = interaction.user
                 if accept_user == comfirm_user:
-                    gas_comfim_embed = discord.Embed(title="已完成援助 - 錢包地址",description=wallet_address ,colour=Color.green())
+                    gas_comfim_embed = discord.Embed(title="已完成援助" ,colour=Color.green())
                     gas_comfim_embed.set_author(name=ctx.author, icon_url=ctx.author.display_avatar)
                     gas_comfim_embed.set_thumbnail(url="https://flyingclub.io/assets/paperplane-3245df87512ef7c15e7b91cc0cdeae37109489f2c839fd48cb3674606e5fe0b3.png")
-                    gas_comfim_embed.add_field(name="錢包餘額", value=f"{token_remain} NZ", inline=True)
-                    gas_comfim_embed.add_field(name="援助狀態", value=interaction.user, inline=True)
+                    gas_comfim_embed.add_field(name="援助對象", value=ctx.author, inline=True)
+                    gas_comfim_embed.add_field(name="空頭大師", value=interaction.user, inline=True)
                     gas_comfim_embed.set_footer(text="空中支援命令 /gas <錢包地址>")
                     view.remove_item(comfirm_button)
                     view.remove_item(reject_button)
+                    view.remove_item(copy_button)
                     await ctx.edit(embed=gas_comfim_embed,view=view)
 
             async def reject_button_callback (interaction):
@@ -99,10 +105,11 @@ async def gas(ctx,wallet_address):
 
             comfirm_button.callback = confirm_button_callback
             reject_button.callback = reject_button_callback
+            copy_button.callback = copy_button_callback
 
         accept_button.callback = accept_button_callback
         view = View()
         view.add_item(accept_button)
-        await ctx.respond (embed=gas_request_embed,view=view)
+        await ctx.respond ("<@&928430972070932513>",embed=gas_request_embed,view=view)
 
 bot.run(discord_token)
