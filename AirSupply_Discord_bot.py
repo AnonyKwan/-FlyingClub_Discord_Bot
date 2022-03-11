@@ -71,11 +71,13 @@ async def gas(ctx,wallet_address):
             comfirm_button = Button(label="已提供援助",style=discord.ButtonStyle.green,emoji="😁")
             reject_button = Button(label="退出援助",style=discord.ButtonStyle.green,emoji="😥")
             copy_button = Button(label="錢包地址",style=discord.ButtonStyle.green,custom_id=wallet_address,emoji="©️")
+            delete_button = Button(label="刪除訊息",style=discord.ButtonStyle.red)
             accept_user = interaction.user
             view.remove_item(accept_button)
             view.add_item(comfirm_button)
             view.add_item(reject_button)
             view.add_item(copy_button)
+            view.add_item(delete_button)
             await ctx.edit(embed=gas_supply_embed,view=view)
 
             async def copy_button_callback (interaction):
@@ -93,6 +95,7 @@ async def gas(ctx,wallet_address):
                     view.remove_item(comfirm_button)
                     view.remove_item(reject_button)
                     view.remove_item(copy_button)
+                    view.remove_item(delete_button)
                     await ctx.edit(embed=gas_comfim_embed,view=view)
 
             async def reject_button_callback (interaction):
@@ -102,13 +105,19 @@ async def gas(ctx,wallet_address):
                   view.remove_item(comfirm_button)
                   view.remove_item(reject_button)
                   view.remove_item(copy_button)
+                  view.remove_item(delete_button)
                   await ctx.edit(embed=gas_request_embed,view=view)
+            
+            async def delete_button_callback (interaction):
+                await ctx.delete()
 
             comfirm_button.callback = confirm_button_callback
             reject_button.callback = reject_button_callback
             copy_button.callback = copy_button_callback
+            delete_button.callback = delete_button_callback
 
         accept_button.callback = accept_button_callback
+        
         view = View()
         view.add_item(accept_button)
         await ctx.respond ("<@&928430972070932513>",embed=gas_request_embed,view=view)
