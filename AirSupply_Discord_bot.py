@@ -2,13 +2,12 @@ import os
 import requests
 import json
 import random
-from dotenv import load_dotenv
 import discord
 from discord import Color
 from discord.ui import Button, View
 
-load_dotenv()
 discord_token = os.getenv('DISCORD_TOKEN')
+print (discord_token)
 api_key_list = ["4JIJWVNR8HJDJF44C37MF5UJAA3NFMZ5R2","FN7RPKGTW7UHXSA6FATIWXQD4M53R9MDF7","5BZDS26XVNHWU4SFJC7E99V7MENRSRSBCJ",'VKXWNXZ134PUJZ9874UU7W72CMYXTE7XG1']
 ramdon_api_key = random.choice(api_key_list)
 
@@ -38,7 +37,7 @@ def polygonscan_status (wallet_address):
 async def on_ready():
     print (f"{bot.user} is connected!")
 
-@bot.slash_command(guild_ids=[358968997762433024],description = "Gas Air Supply")
+@bot.slash_command(guild_ids=[925970052174462976,358968997762433024],description = "Gas Air Supply")
 async def gas(ctx,wallet_address):
     
     if polygonscan_status (wallet_address) == False:
@@ -91,10 +90,12 @@ async def gas(ctx,wallet_address):
                     await ctx.edit(embed=gas_comfim_embed,view=view)
 
             async def reject_button_callback (interaction):
-                view.add_item(accept_button)
-                view.remove_item(comfirm_button)
-                view.remove_item(reject_button)
-                await ctx.edit(embed=gas_request_embed,view=view)
+                reject_user = interaction.user
+                if accept_user == reject_user:
+                  view.add_item(accept_button)
+                  view.remove_item(comfirm_button)
+                  view.remove_item(reject_button)
+                  await ctx.edit(embed=gas_request_embed,view=view)
 
             comfirm_button.callback = confirm_button_callback
             reject_button.callback = reject_button_callback
